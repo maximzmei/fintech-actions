@@ -14,8 +14,9 @@ class ClaudeClient:
         user: str,
         max_tokens: int = 4096,
     ) -> str:
+        suffix = "\n\n[TRUNCATED: diff too large, showing first 400K chars]"
         if len(user) > _MAX_USER_CHARS:
-            user = user[:_MAX_USER_CHARS] + "\n\n[TRUNCATED] diff too large, showing first 400K chars"
+            user = user[:_MAX_USER_CHARS - len(suffix)] + suffix
 
         response = self._client.messages.create(
             model=self.model,

@@ -44,3 +44,10 @@ def test_frameworks_filter():
     diff = '+    logger.info(f"ssn={user.ssn}")\n'
     violations = rules_no_pci.scan(diff)
     assert any(v.rule == "PII_LOGGING" for v in violations)
+
+
+def test_diff_header_not_flagged():
+    rules = FintechRules(frameworks=["PCI_DSS"])
+    diff = "+++ b/shared/card_number_utils.py\n+    x = 1\n"
+    violations = rules.scan(diff)
+    assert all(v.rule != "PII_LOGGING" for v in violations)

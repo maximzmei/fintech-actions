@@ -43,7 +43,7 @@ _RULES = [
         "id": "HARDCODED_SECRET",
         "severity": "CRITICAL",
         "pattern": re.compile(
-            r"(password|secret|api_key|token|private_key)\s*=\s*['\"][^'\"]{8,}['\"]",
+            r"(password|secret|api_key|token|private_key)\s*=\s*['\"][^\s]{8,}['\"]",
             re.IGNORECASE,
         ),
         "message": "Hardcoded secret detected. Use environment variables or secrets manager.",
@@ -52,7 +52,7 @@ _RULES = [
         "id": "NO_IDEMPOTENCY",
         "severity": "HIGH",
         "pattern": re.compile(
-            r"def\s+\w*(pay|transfer|charge|debit|credit|transact)\w*\s*\([^)]*\)",
+            r"def\s+\w*(pay|transfer|charge|debit|credit|transact)\w*\s*\(",
             re.IGNORECASE,
         ),
         "message": "Payment function detected — verify idempotency_key parameter is present.",
@@ -67,7 +67,7 @@ class FintechRules:
     def scan(self, diff: str) -> list[RuleViolation]:
         violations = []
         for i, line in enumerate(diff.splitlines(), start=1):
-            if not line.startswith("+"):
+            if not line.startswith("+") or line.startswith("+++"):
                 continue
             content = line[1:]
             for rule in _RULES:

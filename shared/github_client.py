@@ -9,9 +9,9 @@ class GitHubClient:
         self._repo = self._gh.get_repo(repo)
 
     def get_pr_diff(self, pr_number: int) -> str:
-        pr = self._repo.get_pull(pr_number)
+        url = f"https://api.github.com/repos/{self._repo.full_name}/pulls/{pr_number}"
         resp = requests.get(
-            pr.url,
+            url,
             headers={
                 "Authorization": f"token {self._token}",
                 "Accept": "application/vnd.github.v3.diff",

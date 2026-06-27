@@ -44,4 +44,5 @@ def test_diff_truncated_when_over_limit(mocker):
     call_args = mock_client.messages.create.call_args
     user_content = call_args.kwargs["messages"][0]["content"]
     assert len(user_content) < 500_000
-    assert "[TRUNCATED]" in user_content
+    assert "[TRUNCATED:" in user_content
+    assert len(user_content) <= 400_000
