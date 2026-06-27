@@ -52,10 +52,10 @@ _RULES = [
         "id": "NO_IDEMPOTENCY",
         "severity": "HIGH",
         "pattern": re.compile(
-            r"def\s+\w*(pay|transfer|charge|debit|credit|transact)\w*\s*\([^)]*\)(?![\s\S]{0,200}idempotency)",
+            r"def\s+\w*(pay|transfer|charge|debit|credit|transact)\w*\s*\([^)]*\)",
             re.IGNORECASE,
         ),
-        "message": "Payment function missing idempotency_key parameter.",
+        "message": "Payment function detected — verify idempotency_key parameter is present.",
     },
 ]
 
