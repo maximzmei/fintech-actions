@@ -1,0 +1,33 @@
+name: 'AIWC Spec-Driven Dev'
+description: 'Jira ticket → Claude API → draft spec in Confluence'
+
+inputs:
+  confluence-space:
+    description: 'Confluence space key'
+    required: true
+  confluence-parent:
+    description: 'Parent page title for specs'
+    default: 'Specs'
+  jira-base-url:
+    description: 'Jira/Confluence base URL (e.g. https://org.atlassian.net)'
+    required: true
+  spec-template:
+    description: 'Prompt template: fintech | generic'
+    default: 'fintech'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      shell: bash
+      run: pip install anthropic atlassian-python-api
+    - name: Generate spec
+      shell: bash
+      env:
+        INPUT_CONFLUENCE_SPACE: ${{ inputs.confluence-space }}
+        INPUT_CONFLUENCE_PARENT: ${{ inputs.confluence-parent }}
+        INPUT_JIRA_BASE_URL: ${{ inputs.jira-base-url }}
+      run: python ${{ github.action_path }}/../spec-driven-dev/generate_spec.py
