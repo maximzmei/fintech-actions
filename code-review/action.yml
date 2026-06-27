@@ -1,0 +1,34 @@
+name: 'AIWC Fintech Code Review'
+description: 'LLM-powered fintech-specific PR code review'
+
+inputs:
+  frameworks:
+    description: 'Compliance frameworks (comma-separated: DORA,PCI_DSS,FCA,ISO27001)'
+    default: 'DORA'
+  restricted-paths:
+    description: 'Paths requiring senior sign-off (comma-separated)'
+    default: 'auth/,payments/,crypto/,kyc/'
+  model:
+    description: 'Claude model ID'
+    default: 'claude-sonnet-4-6'
+  max-diff-tokens:
+    description: 'Max diff chars to send to Claude'
+    default: '400000'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      shell: bash
+      run: pip install anthropic PyGithub pydantic
+    - name: Run fintech code review
+      shell: bash
+      env:
+        INPUT_FRAMEWORKS: ${{ inputs.frameworks }}
+        INPUT_RESTRICTED_PATHS: ${{ inputs.restricted-paths }}
+        INPUT_MODEL: ${{ inputs.model }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: python ${{ github.action_path }}/../code-review/review.py
